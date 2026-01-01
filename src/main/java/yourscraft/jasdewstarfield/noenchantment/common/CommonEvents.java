@@ -31,12 +31,6 @@ public class CommonEvents {
             stack.remove(DataComponents.ENCHANTMENTS);
         }
 
-        // 3. 移除修补惩罚
-        Integer repairCost = stack.get(DataComponents.REPAIR_COST);
-        if (repairCost != null && repairCost > 0) {
-            stack.remove(DataComponents.REPAIR_COST);
-        }
-
         return stack;
     }
 }

@@ -16,6 +16,7 @@ public class NoEnchantmentConfig {
     public static class Config {
         public final ModConfigSpec.BooleanValue disableLootEnchantments;
         public final ModConfigSpec.BooleanValue disableRandomEnchantments;
+        public final ModConfigSpec.BooleanValue freeAnvilRepair;
         public final ModConfigSpec.BooleanValue stripItemsOnEvent;
         public final ModConfigSpec.BooleanValue disableEnchantingTable;
         public final ModConfigSpec.BooleanValue hideAnvilRecipesJei;
@@ -24,7 +25,7 @@ public class NoEnchantmentConfig {
 
         Config(ModConfigSpec.Builder builder) {
 
-            builder.comment("Mixins that inject into Minecraft enchantment system").push("mixin");
+            builder.comment("Mixins that inject into Minecraft enchantment system. Might cause incompatibilities.").push("mixin");
 
             disableLootEnchantments = builder
                     .comment("Whether to prevent enchantments from generating in loot tables and mob equipment.")
@@ -35,6 +36,11 @@ public class NoEnchantmentConfig {
                     .comment("Whether to prevent random enchantment calculation (e.g. fishing, enchanting table logic).")
                     .comment("是否禁止随机附魔计算，如钓鱼、附魔台运算")
                     .define("disableRandomEnchantments", true);
+
+            freeAnvilRepair = builder
+                    .comment("Whether to make anvil operations cost no experience and remove the 'Too Expensive' limit.")
+                    .comment("是否让铁砧操作不消耗经验并移除“过于昂贵”的限制")
+                    .define("freeAnvilRepair", true);
 
             builder.pop();
 

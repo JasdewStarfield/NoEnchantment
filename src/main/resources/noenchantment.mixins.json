@@ -4,6 +4,7 @@
   "package": "yourscraft.jasdewstarfield.noenchantment.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AnvilMenuMixin",
     "EnchantmentHelperMixin",
     "LootPoolMixin"
   ],

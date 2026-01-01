@@ -1,7 +1,7 @@
 package yourscraft.jasdewstarfield.noenchantment.mixin;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootPool;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -11,17 +11,20 @@ import java.util.function.Consumer;
 
 import static yourscraft.jasdewstarfield.noenchantment.common.CommonEvents.processItem;
 
-@Mixin(LootTable.class)
-public class LootTableMixin {
+@Mixin(LootPool.class)
+public class LootPoolMixin {
+
     /**
-     * 拦截 getRandomItems 方法的 consumer 参数。
-     * 这个 consumer 是战利品生成后接收物品的回调。
-     * 我们将其替换为自己的代理，先清洗物品，再传给原 consumer。
+     * 拦截 LootPool.addRandomItems 方法的 Consumer 参数。
+     * 这是所有战利品生成（箱子、抽奖、奖励）的必经之路。
+     * * 方法签名: void addRandomItems(Consumer<ItemStack> stackConsumer, LootContext context)
+     * 我们拦截第 1 个参数 (索引 0 的参数是 Consumer，索引 1 是 Context)。
      */
     @ModifyVariable(
-            method = "getRandomItems(Lnet/minecraft/world/level/storage/loot/LootContext;Ljava/util/function/Consumer;)V",
+            method = "addRandomItems",
             at = @At("HEAD"),
-            argsOnly = true
+            argsOnly = true,
+            ordinal = 0
     )
     private Consumer<ItemStack> interceptLootOutput(Consumer<ItemStack> originalConsumer) {
         // 1. 检查配置，如果未开启“禁用战利品附魔”，则直接放行
@@ -31,11 +34,9 @@ public class LootTableMixin {
 
         // 2. 返回一个新的 Consumer，作为中间层;将清洗后的物品传给原始接收者 (放入箱子或给玩家)
         return (stack) -> {
-            if (!stack.isEmpty()) {
+            if (stack != null && !stack.isEmpty()) {
                 ItemStack finalStack = processItem(stack);
                 originalConsumer.accept(finalStack);
-            }else {
-                originalConsumer.accept(stack);
             }
         };
     }

@@ -3,6 +3,7 @@ package yourscraft.jasdewstarfield.noenchantment.common;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 public class CommonEvents {
 
@@ -11,25 +12,29 @@ public class CommonEvents {
      * @return 处理后的 ItemStack (可能是原来的对象，也可能是新创建的普通书)
      */
     public static ItemStack processItem(ItemStack stack) {
-        // 1. 移除常规附魔
-        if (stack.has(DataComponents.ENCHANTMENTS)) {
+        if (stack.isEmpty()) return stack;
+
+        // 1. 优先处理附魔书转换 (防止产生组件残留)
+        if (stack.is(Items.ENCHANTED_BOOK)) {
+            // 直接创建一个全新的普通书
+            ItemStack Book = new ItemStack(Items.BOOK, stack.getCount());
+            // 如果原书有自定义名字，把它复制过去
+            if (stack.has(DataComponents.CUSTOM_NAME)) {
+                Book.set(DataComponents.CUSTOM_NAME, stack.get(DataComponents.CUSTOM_NAME));
+            }
+            return Book;
+        }
+
+        // 2. 移除常规附魔
+        ItemEnchantments enchantments = stack.get(DataComponents.ENCHANTMENTS);
+        if (enchantments != null && !enchantments.isEmpty()) {
             stack.remove(DataComponents.ENCHANTMENTS);
         }
 
-        // 2. 移除附魔书存储的附魔
-        if (stack.is(Items.ENCHANTED_BOOK) && stack.has(DataComponents.STORED_ENCHANTMENTS)) {
-            stack.remove(DataComponents.STORED_ENCHANTMENTS);
-        }
-
         // 3. 移除修补惩罚
-        if (stack.has(DataComponents.REPAIR_COST)) {
+        Integer repairCost = stack.get(DataComponents.REPAIR_COST);
+        if (repairCost != null && repairCost > 0) {
             stack.remove(DataComponents.REPAIR_COST);
-        }
-
-        // 4. 检测并转换：如果是附魔书，变成普通书
-        if (stack.is(Items.ENCHANTED_BOOK) && !stack.has(DataComponents.STORED_ENCHANTMENTS)) {
-            // 创建一个新的普通书 ItemStack，保持原来的数量
-            return new ItemStack(Items.BOOK, stack.getCount());
         }
 
         return stack;

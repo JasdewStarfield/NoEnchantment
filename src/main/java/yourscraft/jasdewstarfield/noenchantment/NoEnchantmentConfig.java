@@ -44,12 +44,12 @@ public class NoEnchantmentConfig {
 
             builder.pop();
 
-            builder.comment("Item postprocessing").push("item");
+            builder.comment("Item postprocessing. This will affect pre-existed items and is by default turned off.").push("postprocessing");
 
             stripItemsOnEvent = builder
                     .comment("Whether to actively strip enchantments from items when they spawn, drop, or are picked up.")
                     .comment("是否在物品掉落、拾取或生物生成时主动移除物品上的附魔")
-                    .define("stripItemsOnEvent", true);
+                    .define("stripItemsOnEvent", false);
 
             builder.pop();
 

@@ -4,6 +4,8 @@
 
 For modpack authors looking to increase difficulty by disabling enchantments, or creating "low-magic/no-magic" modpacks, this is an ideal solution. The mod not only prohibits the generation of enchantments but also (optionally) actively converts existing enchanted items into normal items.
 
+The author used Gemini to help with coding while building this mod. The core mechanics are written manually.
+
 ## 📦 Mod Info
 
 - **Supported Version:** Minecraft 1.21.1 (NeoForge)
